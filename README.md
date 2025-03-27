@@ -1,6 +1,6 @@
 # Hexput Client
 
-A WebSocket client for communicating with Hexput Runtime servers. This client allows for remote code execution, parsing, and function registration with a Hexput Runtime instance.
+A WebSocket client for communicating with Hexput Runtime servers. This client allows for remote execution of Hexput code, parsing, and function registration with a Hexput Runtime instance.
 
 ## Installation
 
@@ -24,7 +24,7 @@ client.close();
 
 ### Executing Code
 
-Execute JavaScript code on the remote Hexput Runtime:
+Execute Hexput code on the remote Hexput Runtime:
 
 ```typescript
 const result = await client.execute(`
@@ -45,8 +45,11 @@ const options = {
 
 try {
   const result = await client.execute(`
-    for (let i=0; i<10; i++) {
-      console.log(i);
+    vl items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    
+    loop item in items {
+      // This will fail due to no_loops option
+      print(item);
     }
   `, options);
 } catch (error) {
@@ -57,16 +60,16 @@ try {
 
 ### Parsing Code
 
-Parse JavaScript code to obtain its AST:
+Parse Hexput code to obtain its AST:
 
 ```typescript
-const ast = await client.parse(`function add(a, b) { return a + b; }`);
+const ast = await client.parse(`cb add(a, b) { res a + b; }`);
 console.log(ast);
 ```
 
 ### Registering Functions
 
-Register functions that can be called by the Hexput Runtime:
+Register JavaScript functions that can be called from Hexput code:
 
 ```typescript
 // Register a function
@@ -118,22 +121,22 @@ Close the WebSocket connection.
 
 ##### `execute(code: string, options?: HexputExecutionOptions, context?: object): Promise<any>`
 
-Execute code in the Hexput Runtime.
+Execute Hexput code in the Hexput Runtime.
 
-- `code`: The JavaScript code to execute
+- `code`: The Hexput code to execute
 - `options`: Execution options (see below)
 - `context`: Initial context for execution
 
 ##### `parse(code: string, options?: HexputParseOptions): Promise<any>`
 
-Parse code using the Hexput Runtime.
+Parse Hexput code using the Hexput Runtime.
 
-- `code`: The JavaScript code to parse
+- `code`: The Hexput code to parse
 - `options`: Parse options (see below)
 
 ##### `registerFunction(name: string, handler: Function): void`
 
-Register a function that can be called by the Hexput Runtime.
+Register a JavaScript function that can be called from Hexput code.
 
 - `name`: The name of the function
 - `handler`: The function handler
