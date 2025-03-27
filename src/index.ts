@@ -257,25 +257,6 @@ export class HexputClient {
   }
 
   /**
-   * Register a function that can be called by the Hexput Runtime
-   * 
-   * @param name The name of the function
-   * @param handler The function handler
-   */
-  public registerFunction(name: string, handler: FunctionHandler): void {
-    this.callHandlers[name] = handler;
-  }
-
-  /**
-   * Unregister a function
-   * 
-   * @param name The name of the function to unregister
-   */
-  public unregisterFunction(name: string): void {
-    delete this.callHandlers[name];
-  }
-
-  /**
    * Execute code in the Hexput Runtime
    * 
    * @param code The code to execute
@@ -348,36 +329,24 @@ export class HexputClient {
   }
 
   /**
-   * Check if a function exists in the Hexput Runtime
+   * Register a handler for a function that can be called by the Hexput Runtime
    * 
-   * @param functionName The name of the function to check
-   * @returns A promise that resolves with a boolean indicating if the function exists
+   * @param name The name of the function to register
+   * @param handler The function implementation that will be called by the server
    */
-  public async functionExists(functionName: string): Promise<boolean> {
-    await this.connect();
-    
-    return new Promise<boolean>((resolve, reject) => {
-      const id = `check-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-      
-      this.responseHandlers[id] = (response) => {
-        if (response.error) {
-          reject(new Error(response.error));
-        } else {
-          resolve(!!response.exists);
-        }
-      };
-      
-      try {
-        this.sendMessage({
-          id,
-          action: 'is_function_exists',
-          function_name: functionName
-        });
-      } catch (error) {
-        delete this.responseHandlers[id];
-        reject(error);
-      }
-    });
+  public registerFunction(name: string, handler: FunctionHandler): void {
+    this.callHandlers[name] = handler;
+    this.log(`Registered function: ${name}`);
+  }
+
+  /**
+   * Unregister a function handler
+   * 
+   * @param name The name of the function to unregister
+   */
+  public unregisterFunction(name: string): void {
+    delete this.callHandlers[name];
+    this.log(`Unregistered function: ${name}`);
   }
 
   /**
