@@ -229,7 +229,7 @@ export class HexputClient {
     
     try {
       // Handle both synchronous and asynchronous functions
-      const result = await Promise.resolve(handler(...args));
+      const result = await Promise.resolve(handler(...args)) ?? null;
       this.sendMessage({
         id,
         result
