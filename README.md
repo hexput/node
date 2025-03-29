@@ -5,7 +5,7 @@ A WebSocket client for communicating with Hexput Runtime servers. This client al
 ## Installation
 
 ```bash
-npm install hexput-client
+npm install hexput
 ```
 
 ## Usage
@@ -13,7 +13,7 @@ npm install hexput-client
 ### Basic Connection
 
 ```typescript
-import HexputClient from 'hexput-client';
+import HexputClient from 'hexput';
 
 // Create a new client instance
 const client = new HexputClient('ws://localhost:9091', { debug: true });
