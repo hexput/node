@@ -1,35 +1,46 @@
 import { WebSocket } from 'ws';
 
 /**
- * Options for configuring code execution in Hexput Runtime
+ * Options for configuring code execution and parsing in Hexput Runtime
  */
-export interface HexputExecutionOptions {
-  no_object_constructions?: boolean;
-  no_array_constructions?: boolean;
-  no_object_navigation?: boolean;
-  no_variable_declaration?: boolean;
-  no_loops?: boolean;
-  no_object_keys?: boolean;
-  no_callbacks?: boolean;
-  no_conditionals?: boolean;
-  no_return_statements?: boolean;
-  no_loop_control?: boolean;
-  no_operators?: boolean;
-  no_equality?: boolean;
-  no_assignments?: boolean;
-  [key: string]: boolean | undefined;
-}
-
-
-/**
- * Options for configuring code parsing in Hexput Runtime
- */
-export interface HexputParseOptions {
+export interface HexputOptions {
+  /** Minify the output (default: true) */
   minify?: boolean;
+  /** Include source mapping in output (default: false) */
   include_source_mapping?: boolean;
+  /** Disable object construction literals (default: false) */
   no_object_constructions?: boolean;
-  [key: string]: boolean | undefined;
+  /** Disable array construction literals (default: false) */
+  no_array_constructions?: boolean;
+  /** Disable object property access (default: false) */
+  no_object_navigation?: boolean;
+  /** Disable variable declarations (default: false) */
+  no_variable_declaration?: boolean;
+  /** Disable loops (default: false) */
+  no_loops?: boolean;
+  /** Disable object keys access (default: false) */
+  no_object_keys?: boolean;
+  /** Disable callback functions (default: false) */
+  no_callbacks?: boolean;
+  /** Disable conditional statements (default: false) */
+  no_conditionals?: boolean;
+  /** Disable return statements (default: false) */
+  no_return_statements?: boolean;
+  /** Disable loop control (break/continue) (default: false) */
+  no_loop_control?: boolean;
+  /** Disable operators (default: false) */
+  no_operators?: boolean;
+  /** Disable equality operators (default: false) */
+  no_equality?: boolean;
+  /** Disable assignment operators (default: false) */
+  no_assignments?: boolean;
 }
+
+/** Options for parse operation */
+export type HexputParseOptions = HexputOptions;
+
+/** Options for execution operation */
+export type HexputExecutionOptions = Omit<HexputOptions, "minify">;
 
 /**
  * Types of Hexput messages
