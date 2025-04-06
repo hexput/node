@@ -1,6 +1,6 @@
 {
     "name": "hexput",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "types": "src/index.ts",
     "type": "commonjs",
     "main": "dist/index.js",
