@@ -82,19 +82,6 @@ client.registerFunction('fetchData', async (url) => {
 client.unregisterFunction('fetchData');
 ```
 
-### Checking Function Existence
-
-Check if a function exists in the Hexput Runtime:
-
-```typescript
-const exists = await client.functionExists('someFunction');
-if (exists) {
-  console.log('Function exists in the runtime');
-} else {
-  console.log('Function does not exist');
-}
-```
-
 ## API Reference
 
 ### `HexputClient`
@@ -147,12 +134,6 @@ Unregister a function.
 
 - `name`: The name of the function to unregister
 
-##### `functionExists(functionName: string): Promise<boolean>`
-
-Check if a function exists in the Hexput Runtime.
-
-- `functionName`: The name of the function to check
-
 ### Options Interfaces
 
 #### HexputExecutionOptions
@@ -186,7 +167,3 @@ interface HexputParseOptions {
   [key: string]: boolean | undefined;
 }
 ```
-
-## License
-
-MIT
