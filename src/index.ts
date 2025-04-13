@@ -40,7 +40,9 @@ export interface HexputOptions {
 export type HexputParseOptions = HexputOptions;
 
 /** Options for execution operation */
-export type HexputExecutionOptions = Omit<HexputOptions, "minify">;
+export type HexputExecutionOptions = Omit<HexputOptions, "minify"> & {
+  secret_context?: Record<string, any>;
+};
 
 /**
  * Types of Hexput messages
@@ -54,8 +56,9 @@ type ResponseHandler = (response: any) => void;
 
 /**
  * Interface for function handlers
+ * The first argument is always the secret context (if provided), followed by the arguments from the runtime.
  */
-type FunctionHandler = (...args: any[]) => any;
+type FunctionHandler = (secretContext: Record<string, any>, ...args: any[]) => any;
 
 /**
  * HexputClient class for communicating with a Hexput Runtime server
@@ -227,9 +230,10 @@ export class HexputClient {
    * @param message The function call message
    */
   private async handleFunctionCall(message: any): Promise<void> {
-    const { id, function_name, arguments: args } = message;
+    const { id, function_name, arguments: args, secret_context } = message;
     const handler = this.callHandlers[function_name];
-    
+    const secretContextData = secret_context || {}; // Ensure secretContext is an object, even if null/undefined
+
     if (!handler) {
       this.sendMessage({
         id,
@@ -240,7 +244,8 @@ export class HexputClient {
     
     try {
       // Handle both synchronous and asynchronous functions
-      const result = await Promise.resolve(handler(...args)) ?? null;
+      // Pass secret_context as the first argument, followed by the runtime arguments
+      const result = await Promise.resolve(handler(secretContextData, ...args)) ?? null;
       this.sendMessage({
         id,
         result
@@ -271,7 +276,7 @@ export class HexputClient {
    * Execute code in the Hexput Runtime
    * 
    * @param code The code to execute
-   * @param options Execution options
+   * @param options Execution options, including optional secret_context
    * @param context Initial context for execution
    * @returns A promise that resolves with the execution result
    */
@@ -290,13 +295,23 @@ export class HexputClient {
       };
       
       try {
-        this.sendMessage({
+        // Prepare the message, including options and secret_context if provided
+        const message: any = {
           id,
           action: 'execute',
           code,
-          options,
+          options: { ...options }, // Clone options to avoid modifying the original object
           context
-        });
+        };
+
+        // Remove secret_context from the main options object before sending if it exists
+        // The server expects secret_context at the top level, not inside options.
+        if (message.options.secret_context) {
+          message.secret_context = message.options.secret_context;
+          delete message.options.secret_context;
+        }
+
+        this.sendMessage(message);
       } catch (error) {
         delete this.responseHandlers[id];
         reject(error);
@@ -374,3 +389,4 @@ export class HexputClient {
 
 // Export the main class
 export default HexputClient;
+
